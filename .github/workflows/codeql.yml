@@ -1,0 +1,33 @@
+name: Demo GHAS CodeQL with composite action
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+    - name: Checkout Latest Commit
+      uses: actions/checkout@v4.1.1
+      with:
+        fetch-depth: 1
+
+    - name: Initialize GHAS CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        queries: security-extended
+        languages: java-kotlin
+
+    - name: Run hello world basic composite action
+      uses: aibaars/demo-codeql-composite-action/.github/actions/hello-world@main
+      with:
+        who-to-greet: 'Mona the Octocat'
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:java"
